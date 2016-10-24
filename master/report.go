@@ -19,8 +19,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/prometheus/client_golang/prometheus"
+	"sync"
+	"time"
+	//	"github.com/prometheus/client_golang/prometheus"
 )
 
 const (
@@ -30,17 +31,17 @@ const (
 
 // experimenting with prometheus for counters in the project.
 // will move onto use other features it this looks good.1
-var StoppedNodesCounter = prometheus.NewCounter(
-	prometheus.CounterOpts{
-		Namespace: "Minio",
-		Subsystem: "Minio-Chaos-Test",
-		Name:      "StoppedNodesCounter",
-		Help:      "Total number of Nodes Stopped by Chaos workers currently",
-	})
+//var StoppedNodesCounter = prometheus.NewCounter(
+//	prometheus.CounterOpts{
+//		Namespace: "Minio",
+//		Subsystem: "Minio-Chaos-Test",
+//		Name:      "StoppedNodesCounter",
+//		Help:      "Total number of Nodes Stopped by Chaos workers currently",
+//	})
 
 // register the prometheus service.
 func init() {
-	prometheus.MustRegister(StoppedNodesCounter)
+	//prometheus.MustRegister(StoppedNodesCounter)
 }
 
 // Report - contains fields to keep the status of the chaos test across all chaos workers on all nodes.
@@ -95,8 +96,8 @@ func (rep reportHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Once the status obtained write it to as a HTTP response.
 
 	if err := en.Encode(Report{
-		Since: rep.Since,
-		// other parameters to be reported goes here.
+
+	// other parameters to be reported goes here.
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

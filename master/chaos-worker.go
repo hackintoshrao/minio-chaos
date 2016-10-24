@@ -16,13 +16,19 @@
 
 package main
 
+import (
+	"net/rpc"
+)
+
 // workerConfig contains info about the chaos workers running on nodes to be tested for fault tolerance.
 // Also contains info about Minio server instance running on these machines.
 type ChaosWorker struct {
 	// Endpoint of the chaos worker.
 	WorkerEndpoint string
-	// Info of the Minio Server Instance runnign on the node of the chaos worker.
+	// Info of the Minio Server Instance running on the node of the chaos worker.
 	Node MinioNode
+	// RPC client for communicating the worker.
+	Client *rpc.Client
 	// Directory in which the chaos worker dumps the report.
 	ReportDir string
 }
@@ -31,8 +37,24 @@ type ChaosWorker struct {
 //             Also checks whether Minio server instance is running on the specified port on the remote node.
 //             Reports failure if either the chaos-worker on the remote node is not reachable or Minio server
 // 	       is not running on the specified port on the remote node.
-func (chaos ChaosWorker) ReportStatus() {
+func (chaos ChaosWorker) InitChaos() (*rpc.Client, error) {
 	// TODO: Code goes here.
+	// Tries to connect to worker on the remote node using HTTP protocol (The port on which rpc server is listening)
+	client, err := rpc.DialHTTP("tcp", chaos.WorkerEndpoint)
+	if err != nil {
+		panic(err)
+		return nil, err
+	}
+	minioRemoteAddr := chaos.Node.Addr
+	args := &minioRemoteAddr
+	reply := struct{}{}
+	err = client.Call("ChaosWorker.InitChaosWorker", args, &reply)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
 }
 
 // ReportStatus - Obtain the Status of the Minio node and choas-worker using the RPC call.

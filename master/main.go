@@ -18,47 +18,66 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	//	"net/http"
+	//	"net/rpc"
+	"log"
+	"strings"
+	//	"github.com/prometheus/client_golang/prometheus"
+)
 
-	"github.com/prometheus/client_golang/prometheus"
+const (
+	MinioDefaultAddr = "http://127.0.0.1:9000"
 )
 
 func main() {
 	// TODO: parse all the flags here.
-	endpointStr := flag.String("endpoints", "", "RPC endpoints of workers.")
+	endPointStr := flag.String("endpoints", "", "RPC endpoints of workers.")
 	flag.Parse()
+	endPoints := strings.Split(*endPointStr, ",")
 
-	// TODO: collect all the end points into `endPoints`.
-
-	// TODO: Iterate through the endPoints and create `ChaosTest` instance.
-	for i, endPoint := range endPoint {
-		worker := ChaosWorker{}
-		// TODO: Init the struct here.
+	chaosWorkers := make([]ChaosWorker, len(endPoints))
+	// Iterate through the endPoints and create `ChaosTest` instance.
+	for i, endPoint := range endPoints {
+		worker := ChaosWorker{
+			WorkerEndpoint: endPoint,
+			Node: MinioNode{
+				Addr: MinioDefaultAddr,
+			},
+			//TODO: Make use of report Dir.
+			ReportDir: "/not-used-yet",
+		}
 		// push all the workers into the array.
-		chaosWorkers = append(chaosWorkers, worker)
+		chaosWorkers[i] = worker
 	}
 	// Create `ChaosTest` instance here.
 	chaosTest := ChaosTest{
 		ChaosWorkers: chaosWorkers,
 	}
-	// TODO: Start the Server and thed RPC service correctly below.
-
-	// Register the chaos test reporting end point.
-	sh := statusHandler{status: &t.status}
-
-	http.Handle("/status", sh)
-
-	// Register the Prometheus metrics endPoint,
-	// Currently used only for simple counters.
-	http.Handle("/metrics", prometheus.Handler())
-	// Start the server.
-	go func() {
-		http.ListenAndServe(":9998", nil)
-	}()
+	//	// TODO: Start the Server and thed RPC service correctly below.
+	//mux := http.NewServeMux()
+	//	sh := statusHandler{status: &t.status}
+	//	sh := &reportHandler{}
+	//	mux.Handle("/status", sh)
+	//stringRpc := new(StringService)
+	//	rpcServer := rpc.NewServer()
+	//	rpcServer.RegisterName("Master", &chaosTest)
+	//	mux.Handle("/master", rpcServer)
 
 	// Initialize all the workers on remote nodes.
 	// also confirms that minio server instances are running on the remote nodes.
-	chaosTest.InitChaosTest()
-	// Unleash the chaos test.
-	chaosTest.UnleashChaos()
+	if isFailed := chaosTest.InitChaosTest(); isFailed {
+		log.Fatal("Iniitalizing of Chaos test failed.")
+	}
+
+	//	// Register the chaos test reporting end point.
+	//
+	//
+	//	// Register the Prometheus metrics endPoint,
+	//	// Currently used only for simple counters.
+	//	http.Handle("/metrics", prometheus.Handler())
+	//	// Start the server.
+	//http.ListenAndServe(":9998", nil)
+
+	//	// Unleash the chaos test.
+	//	chaosTest.UnleashChaos()
 }
