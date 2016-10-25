@@ -32,22 +32,32 @@ type MinioNode struct {
 type Worker struct {
 }
 
+func StartMinioServer() {
+
+}
+
+func StopMinioServer() {
+
+}
+
 // Tests whether Minio is running on the node in the specified port.
 // Send a GET request and find out whether the header contains string `Minio` in it.
 func IsMinioRunning(addr string) error {
+	// error to be returned to the master if Minio server is not reachable on the node.
+	var errRunMinioServer = fmt.Errorf("Run Minio on %s and start the test again.", addr)
 	// send GET request to the specified port.
 	resp, err := http.Get(addr)
 	// Errors out if server is not running at the specified port.
 	// return error to the RPC request.
 	if err != nil {
 		log.Println(err)
-		return err
+		return errRunMinioServer
 	}
 	log.Println(resp.Header.Get("Server"))
 	// check if the server running is Minio server.
 	// this is done by checking for string `Minio` is the `Server` header of the response.
 	if !strings.Contains(resp.Header.Get("Server"), "Minio") {
-		return fmt.Errorf("Minio server is not Running on: %s, please run the server and try again.", addr)
+		return errRunMinioServer
 	}
 	// success, return the error to be `nil` to the RPC request.
 	return nil

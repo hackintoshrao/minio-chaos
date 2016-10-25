@@ -42,7 +42,6 @@ func (chaos ChaosWorker) InitChaos() (*rpc.Client, error) {
 	// Tries to connect to worker on the remote node using HTTP protocol (The port on which rpc server is listening)
 	client, err := rpc.DialHTTP("tcp", chaos.WorkerEndpoint)
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
 	minioRemoteAddr := chaos.Node.Addr
@@ -55,7 +54,7 @@ func (chaos ChaosWorker) InitChaos() (*rpc.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	// return the RPC client for further interation with the worker on the remote node.
+	// return the RPC client for further interation with the worker on the remote nod// return the RPC client for further interation with the worker on the remote node.e.
 	return client, nil
 }
 

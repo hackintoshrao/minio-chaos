@@ -17,7 +17,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -45,8 +44,7 @@ func (chaos *ChaosTest) InitChaosTest() bool {
 	// If there's no error RPC client will returned, assign it to worker.Client for
 	// any further RPC communication with the workers on remote nodes.
 	for _, worker := range chaos.ChaosWorkers {
-		fmt.Println("chaos loop: ", len(chaos.ChaosWorkers))
-		fmt.Println(worker.WorkerEndpoint)
+		log.Println("Initializing worker at: ", worker.WorkerEndpoint)
 		// Communicate with remote chaos worker.
 		// The worker will also verify whether Minio server is running on their respective nodes and in the specified port.
 		rpcClient, err := worker.InitChaos()
