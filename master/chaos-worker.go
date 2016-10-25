@@ -48,12 +48,14 @@ func (chaos ChaosWorker) InitChaos() (*rpc.Client, error) {
 	minioRemoteAddr := chaos.Node.Addr
 	args := &minioRemoteAddr
 	reply := struct{}{}
+	// Call the `InitChaosWorker` RPC method on the remote worker.
+	// The worker verifies if the Minio server is running on the specified port on the remote node.
 	err = client.Call("ChaosWorker.InitChaosWorker", args, &reply)
-
+	// return in case of error.
 	if err != nil {
 		return nil, err
 	}
-
+	// return the RPC client for further interation with the worker on the remote node.
 	return client, nil
 }
 
