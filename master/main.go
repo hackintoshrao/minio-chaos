@@ -35,7 +35,7 @@ func main() {
 	flag.Parse()
 	endPoints := strings.Split(*endPointStr, ",")
 
-	chaosWorkers := make([]ChaosWorker, len(endPoints))
+	chaosWorkers := make([]*ChaosWorker, len(endPoints))
 
 	// Iterate through the endPoints and create `ChaosTest` instance.
 	for i, endPoint := range endPoints {
@@ -48,7 +48,7 @@ func main() {
 			ReportDir: "/not-used-yet",
 		}
 		// push all the workers into the array.
-		chaosWorkers[i] = worker
+		chaosWorkers[i] = &worker
 	}
 
 	recoveryTime, err := strconv.Atoi(*recoverStr)

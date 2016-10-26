@@ -21,7 +21,7 @@ import (
 )
 
 type ChaosTest struct {
-	ChaosWorkers []ChaosWorker
+	ChaosWorkers []*ChaosWorker
 	RecoveryTime int
 }
 

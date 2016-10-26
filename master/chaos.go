@@ -93,7 +93,7 @@ func (round *RoundRobinChaos) Execute(chaos ChaosTest) error {
 	for _, worker := range chaos.ChaosWorkers {
 		// TODO: Remove Sleep and introduce Context/Timeout and signalling methods to improve the logic.
 		// Call the Fail method to introduce failure on the remote node.
-		err = round.Fail(worker)
+		err = round.Fail(*worker)
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,7 @@ func (round *RoundRobinChaos) Execute(chaos ChaosTest) error {
 		// Sleep for the time interval set for the failure recovery.
 		time.Sleep(time.Duration(chaos.RecoveryTime) * time.Second)
 		// Call the `Recover` Method to recover from the previously introduced failure on the remote node.
-		err = round.Recover(worker)
+		err = round.Recover(*worker)
 		if err != nil {
 			return err
 		}
