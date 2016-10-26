@@ -17,14 +17,21 @@ Choas framework for testing Minio's fault tolerance capability.
 # How to run. 
 
 - Fetch the project 
+
   `$go get github.com/hackintoshrao/minio-chaos` 
 - Build master program.
+
   `$ cd $GOPATH/src/github.com/hackintoshrao/minio-chaos/master && go build`
 - Run Minio Distributed server using systemd script on remote nodes. 
   The workers use `systemd` to control the Minio process. [Click here](https://github.com/minio/minio/tree/master/dist/linux-systemd/distributed) for info on configuring systemd to run Minio Distributed.
-- Build and run chaos-workers on each these remote nodes.
+- Build and run chaos-workers on each these remote nodes. Use `sudo` to run worker. 
+  Need privilaged access to control Minio process using systemd.
+  
   `$ go get github.com/hackintoshrao/minio-chaos`
-  `$ cd $GOPATH/src/github.com/hackintoshrao/minio-chaos/worker/ && go build && ./worker`
+  
+  `$ cd $GOPATH/src/github.com/hackintoshrao/minio-chaos/worker/ && go build`
+  
+  `$ sudo ./worker`
 - Run master. 
   `master -endpoints="<Node-1-IP>:9997,<NODE-2-IP>:9997,<NODE-3-IP>:9997...... -recover=30"`
    Currenly Chaos workers run at port 9997.
