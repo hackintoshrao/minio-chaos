@@ -22,6 +22,7 @@ import (
 
 type ChaosTest struct {
 	ChaosWorkers []ChaosWorker
+	RecoveryTime int
 }
 
 func (chaos *ChaosTest) InitChaosWorker(args *string, reply *int) error {
@@ -62,13 +63,13 @@ func (chaos *ChaosTest) InitChaosTest() bool {
 	return errorOccured
 }
 
-// Use Random picker to select the nodes and signal the chaos workers on the nodes to
-// shutdown the Minio server process and restart it after a definate or a random interval,
-// as defined while the test process is run.
-// The status of the Minio servers can be obtaining by visiting the `/report` endpoint,
-// and the chaos event will logged.
-// The log contains the info the nodes that were bought down and the time at which they were back.
-func (chaos *ChaosTest) UnleashChaos() {
+// UnleshChaos - Recieves the `Chaos` interface which has methods for intruducing failure/recovery and calls it.
+func (chaos *ChaosTest) UnleashChaos(failTest Chaos) error {
 	// TODO: Code goes here.
+	var err error
+	// Call the execute Method of the Chaos interface.
+	err = failTest.Execute(*chaos)
+
+	return err
 
 }

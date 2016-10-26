@@ -18,11 +18,9 @@ package main
 
 import (
 	"flag"
-	//	"net/http"
-	//	"net/rpc"
 	"log"
+	"strconv"
 	"strings"
-	//	"github.com/prometheus/client_golang/prometheus"
 )
 
 const (
@@ -32,10 +30,13 @@ const (
 func main() {
 	// TODO: parse all the flags here.
 	endPointStr := flag.String("endpoints", "", "RPC endpoints of workers.")
+	recoverStr := flag.String("recover", "10", "Recovery time of the remote node after Choas.")
+	// parse the command line flags.
 	flag.Parse()
 	endPoints := strings.Split(*endPointStr, ",")
 
 	chaosWorkers := make([]ChaosWorker, len(endPoints))
+
 	// Iterate through the endPoints and create `ChaosTest` instance.
 	for i, endPoint := range endPoints {
 		worker := ChaosWorker{
@@ -49,19 +50,16 @@ func main() {
 		// push all the workers into the array.
 		chaosWorkers[i] = worker
 	}
+
+	recoveryTime, err := strconv.Atoi(*recoverStr)
+	if err != nil {
+		log.Fatalf("Please enter valid time string for recovery: ", err)
+	}
 	// Create `ChaosTest` instance here.
 	chaosTest := ChaosTest{
 		ChaosWorkers: chaosWorkers,
+		RecoveryTime: recoveryTime,
 	}
-	//	// TODO: Start the Server and thed RPC service correctly below.
-	//mux := http.NewServeMux()
-	//	sh := statusHandler{status: &t.status}
-	//	sh := &reportHandler{}
-	//	mux.Handle("/status", sh)
-	//stringRpc := new(StringService)
-	//	rpcServer := rpc.NewServer()
-	//	rpcServer.RegisterName("Master", &chaosTest)
-	//	mux.Handle("/master", rpcServer)
 
 	// Initialize all the workers on remote nodes.
 	// also confirms that minio server instances are running on the remote nodes.
@@ -69,15 +67,14 @@ func main() {
 		log.Fatal("Iniitalizing of Chaos test failed.")
 	}
 
-	//	// Register the chaos test reporting end point.
-	//
-	//
-	//	// Register the Prometheus metrics endPoint,
-	//	// Currently used only for simple counters.
-	//	http.Handle("/metrics", prometheus.Handler())
-	//	// Start the server.
-	//http.ListenAndServe(":9998", nil)
+	log.Println("Initialization finished, Starting Chaos test.")
 
-	//	// Unleash the chaos test.
-	//	chaosTest.UnleashChaos()
+	// For extending the tests, any new chaos test has to satisfy `Chaos` interface,
+	// `RoundRobinChaos` satisfies the `Chaos` interface and it Fails the nodes and recovers them
+	// one after another in round robin fashion.
+	roundRobinChaos := &RoundRobinChaos{}
+	err = chaosTest.UnleashChaos(roundRobinChaos)
+	if err != nil {
+		log.Fatal("Chaos test failed with error: ", err)
+	}
 }
