@@ -18,7 +18,7 @@ Choas framework for testing Minio's fault tolerance capability.
 
 - Fetch the project 
 
-  `$go get github.com/hackintoshrao/minio-chaos` 
+  `$ go get github.com/hackintoshrao/minio-chaos` 
 - Build master program.
 
   `$ cd $GOPATH/src/github.com/hackintoshrao/minio-chaos/master && go build`
@@ -34,7 +34,7 @@ Choas framework for testing Minio's fault tolerance capability.
   `$ sudo ./worker`
 - Run master. 
 
-  `master -endpoints="<Node-1-IP>:9997,<NODE-2-IP>:9997,<NODE-3-IP>:9997...... -recover=30"`
+  `master -endpoints="<Node-1-IP>:9997,<NODE-2-IP>:9997,<NODE-3-IP>:9997......" -recover=30`
    Currenly Chaos workers run at port 9997.
    
   
