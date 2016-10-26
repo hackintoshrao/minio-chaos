@@ -51,6 +51,8 @@ Choas framework for testing Minio's fault tolerance capability.
 
 - By Extending the `Chaos` interface different failures can be introduced. Next step is to make it more easier to run 
   , with more options and different failures like multiple node failures will introduced.
+- Better reporting of status of the test during and after the run. Expose HTTP endpoint or better logging for reporting.
+- Experimental use of Prometheus for better visualization of the test.
   
 # Contributing. 
 
